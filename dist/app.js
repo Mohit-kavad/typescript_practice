@@ -1,73 +1,52 @@
 "use strict";
-// classes
-class Department {
-    constructor(id, name) {
-        this.id = id;
-        this.name = name;
-        // privaye readonly id :string;   //--> readonly keyword just like private public by this Kword can not write
-        // public name: string;
-        // private employees: string[] = []; //array Type->string[] &  can accessible only inside this class
-        this.employees = [];
-        //  ^---short method to declare propertice with access modifire &
-        // this.name = n;
+// type intersection
+const e1 = {
+    name: "Max",
+    privileges: ["create-server"],
+    startDate: new Date(),
+};
+console.log(e1);
+function add(a, b) {
+    if (typeof a === "string" || typeof b === "string") {
+        //concept of type guard
+        return a.toString() + b.toString();
     }
-    discribe() {
-        console.log(`Depatment (${this.id}): ${this.name}`);
+    return a + b;
+}
+function printEmployeeInformation(empInfo) {
+    console.log(`Name : ${empInfo.name}`); /*we will get name properties without any
+          problem because both Objec has same
+          propertie which is name:string for that reason have to use type Guard*/
+    if ("privileges" in empInfo) {
+        /** here in keyword check that => privileges is in empInfo? */
+        console.log(`previlege : ${empInfo.privileges}`);
     }
-    static createEmployee(name) {
-        return { name: name };
-    }
-    addEmployee(employee) {
-        this.employees.push(employee);
-    }
-    printEmployeeInformation() {
-        console.log(this.employees.length);
-        console.log(this.employees); // print the array
+    if ("startDate" in empInfo) {
+        console.log(`starting date : ${empInfo.startDate}`);
     }
 }
-Department.fiscalYear = 2022;
-class ITDepartment extends Department {
-    constructor(id, admins) {
-        super(id, "IT"); // super() tacks the argument of parentclass constructor
-        this.admins = admins;
+// printEmployeeInformation(e1);
+printEmployeeInformation({ name: "Mohit", startDate: new Date() });
+// Type has another type of type guard
+class Car {
+    drive() {
+        console.log("Driving...");
     }
 }
-class AccountingDepartment extends Department {
-    constructor(id, reports) {
-        super(id, "Accounting");
-        this.reports = reports;
+class Truck {
+    drive() {
+        console.log("Driving a Truck...");
     }
-    addEmployee(name) {
-        if (name === "Max") {
-            return;
-        }
-        this.employees.push(name);
-    }
-    addReport(text) {
-        this.reports.push(text);
-    }
-    printReports() {
-        console.log(this.reports);
+    loadCargo(amount) {
+        console.log("Loading Cargo..." + amount);
     }
 }
-const it = new ITDepartment("1", ["mohit"]);
-console.log(it);
-it.discribe();
-it.addEmployee("Mohit");
-it.addEmployee("Khushal");
-it.addEmployee("Ayush");
-// it.employees[2] = "Mihir"  // we can change arrays value outside of the class if property is not private
-it.printEmployeeInformation();
-//accounting department
-const accounting = new AccountingDepartment("2", []);
-accounting.addEmployee("Mihir");
-accounting.addEmployee("ashish");
-accounting.addEmployee("Max"); // will not print method overridding
-accounting.addReport("somthing went wrong");
-accounting.addReport("Page 404 not Found");
-accounting.printReports();
-accounting.printEmployeeInformation();
-console.log(accounting);
-// using static method 
-const employeeName = Department.createEmployee('Jonas');
-console.log(employeeName, Department.fiscalYear);
+const v1 = new Car();
+const v2 = new Truck();
+function useVehical(vehical) {
+    vehical.drive();
+    if ("loadCargo" in vehical) {
+        vehical.loadCargo(1000);
+    }
+}
+useVehical(v2);
