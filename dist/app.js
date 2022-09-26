@@ -7,8 +7,8 @@ const e1 = {
 };
 console.log(e1);
 function add(a, b) {
+    //concept of type guard
     if (typeof a === "string" || typeof b === "string") {
-        //concept of type guard
         return a.toString() + b.toString();
     }
     return a + b;
@@ -48,5 +48,40 @@ function useVehical(vehical) {
     if ("loadCargo" in vehical) {
         vehical.loadCargo(1000);
     }
+    //   if (vehical instanceof Truck) {  //--->> second method which is instenceof but we can not use with interface
+    //     vehical.loadCargo(1000);
+    //   }
 }
 useVehical(v2);
+useVehical(v1);
+function moveAnimal(animal) {
+    let speed;
+    switch (animal.type) {
+        case "bird":
+            speed = animal.flyingSpeed;
+            break;
+        case "horse":
+            speed = animal.runningSpeed;
+            break;
+    }
+    console.log("Moving at Speed : " + speed);
+}
+moveAnimal({ type: "bird", flyingSpeed: 20 });
+moveAnimal({ type: "horse", runningSpeed: 50 });
+const errorBag = {
+    email: "Not valid email",
+    username: 'Must start with a capital character!'
+};
+function add1(a, b) {
+    //concept of type guard
+    if (typeof a === "string" || typeof b === "string") {
+        return a.toString() + b.toString();
+    }
+    return a + b;
+}
+const storedVal = add1(22, 3);
+console.log(storedVal);
+// Nullish Colescing
+const usrIn = null;
+const storedData = usrIn !== null && usrIn !== void 0 ? usrIn : "DEFAULT";
+console.log(storedData);
