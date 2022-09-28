@@ -1,87 +1,77 @@
 "use strict";
-// type intersection
-const e1 = {
-    name: "Max",
-    privileges: ["create-server"],
-    startDate: new Date(),
-};
-console.log(e1);
-function add(a, b) {
-    //concept of type guard
-    if (typeof a === "string" || typeof b === "string") {
-        return a.toString() + b.toString();
-    }
-    return a + b;
+// const names: Array<string> = []; //string[];
+// // names[0].split(" ");
+// const promise : Promise<string> = new Promise((resolve,reject)=>{
+//     setTimeout(()=>{
+//         resolve("hello World")
+//     },2000)
+// })
+// promise.then(data =>{
+//     console.log(data);
+// })
+// Creating Geneic functions
+let arrNum = [23, 43, 54, 65, 1234];
+let arrStr = ["a", "b", "c", "d", "e"];
+function getRandomEl(arr) {
+    const index = Math.floor(Math.random() * arr.length);
+    return arr[index];
 }
-function printEmployeeInformation(empInfo) {
-    console.log(`Name : ${empInfo.name}`); /*we will get name properties without any
-          problem because both Objec has same
-          propertie which is name:string for that reason have to use type Guard*/
-    if ("privileges" in empInfo) {
-        /** here in keyword check that => privileges is in empInfo? */
-        console.log(`previlege : ${empInfo.privileges}`);
+let result;
+console.log(getRandomEl(arrStr));
+console.log(getRandomEl(arrNum));
+// working with constrains
+function merge(objA, objB) {
+    return Object.assign(objA, objB);
+}
+const mergedObj = merge({ name: "Max", hobbies: ["Sports"] }, { age: 30 });
+console.log(mergedObj.age);
+function countAndDescribe(element) {
+    /** return tuples type of 1st Elemnt is T and 2nd return type is string */
+    let discriptionText = "Got no Element!";
+    if (element.length === 1) {
+        discriptionText = "Got 1 Element";
     }
-    if ("startDate" in empInfo) {
-        console.log(`starting date : ${empInfo.startDate}`);
+    else if (element.length > 1) {
+        discriptionText = `Got ${element.length} Element`;
+    }
+    return [element, discriptionText]; //returns tuples
+}
+console.log(countAndDescribe("Hello World!"));
+console.log(countAndDescribe(["Hello", "World"]));
+console.log(countAndDescribe(""));
+// console.log(countAndDescribe(10); // number does not have length property and there for this does not work
+// the kyeof constrain
+function extractAndConvert(obj, key) {
+    return "value : " + obj[key];
+}
+const obj = extractAndConvert({ name: "Max" }, "name");
+console.log(obj);
+// Generic Classes
+class DataStorage {
+    constructor() {
+        this.data = [];
+    }
+    addItem(item) {
+        this.data.push(item);
+    }
+    removeItem(item) {
+        if (this.data.indexOf(item) === -1) {
+            return;
+        }
+        this.data.splice(this.data.indexOf(item), 1);
+    }
+    getItem() {
+        return [...this.data];
     }
 }
-// printEmployeeInformation(e1);
-printEmployeeInformation({ name: "Mohit", startDate: new Date() });
-// Type has another type of type guard
-class Car {
-    drive() {
-        console.log("Driving...");
-    }
-}
-class Truck {
-    drive() {
-        console.log("Driving a Truck...");
-    }
-    loadCargo(amount) {
-        console.log("Loading Cargo..." + amount);
-    }
-}
-const v1 = new Car();
-const v2 = new Truck();
-function useVehical(vehical) {
-    vehical.drive();
-    if ("loadCargo" in vehical) {
-        vehical.loadCargo(1000);
-    }
-    //   if (vehical instanceof Truck) {  //--->> second method which is instenceof but we can not use with interface
-    //     vehical.loadCargo(1000);
-    //   }
-}
-useVehical(v2);
-useVehical(v1);
-function moveAnimal(animal) {
-    let speed;
-    switch (animal.type) {
-        case "bird":
-            speed = animal.flyingSpeed;
-            break;
-        case "horse":
-            speed = animal.runningSpeed;
-            break;
-    }
-    console.log("Moving at Speed : " + speed);
-}
-moveAnimal({ type: "bird", flyingSpeed: 20 });
-moveAnimal({ type: "horse", runningSpeed: 50 });
-const errorBag = {
-    email: "Not valid email",
-    username: 'Must start with a capital character!'
-};
-function add1(a, b) {
-    //concept of type guard
-    if (typeof a === "string" || typeof b === "string") {
-        return a.toString() + b.toString();
-    }
-    return a + b;
-}
-const storedVal = add1(22, 3);
-console.log(storedVal);
-// Nullish Colescing
-const usrIn = null;
-const storedData = usrIn !== null && usrIn !== void 0 ? usrIn : "DEFAULT";
-console.log(storedData);
+const textStorage = new DataStorage();
+textStorage.addItem("Max");
+textStorage.addItem("Mohit");
+textStorage.addItem("Manu");
+textStorage.removeItem('Mohit');
+console.log(textStorage.getItem());
+const objStorage = new DataStorage();
+objStorage.addItem({ name: "Max" });
+objStorage.addItem({ name: "Manu" });
+objStorage.removeItem({ name: 'Manu' });
+console.log(objStorage.getItem());

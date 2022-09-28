@@ -1,157 +1,96 @@
-// type intersection
+// const names: Array<string> = []; //string[];
+// // names[0].split(" ");
 
-type Admin = {
-  name: string;
-  privileges: string[];
-};
+// const promise : Promise<string> = new Promise((resolve,reject)=>{
+//     setTimeout(()=>{
+//         resolve("hello World")
+//     },2000)
+// })
 
-type Employee = {
-  name: string;
-  startDate: Date;
-};
+// promise.then(data =>{
+//     console.log(data);
+// })
 
-type ElevatedEmployee = Admin & Employee; //--> type intersection
+// Creating Geneic functions
 
-const e1: ElevatedEmployee = {
-  name: "Max",
-  privileges: ["create-server"],
-  startDate: new Date(),
-};
+let arrNum = [23, 43, 54, 65, 1234];
+let arrStr = ["a", "b", "c", "d", "e"];
 
-console.log(e1);
+function getRandomEl<A>(arr: A[]) {
+  const index = Math.floor(Math.random() * arr.length);
+  return arr[index];
+}
 
-type Combinable = string | number;
-type Numeric = number | boolean;
+let result: string;
+console.log(getRandomEl(arrStr));
+console.log(getRandomEl(arrNum));
 
-type Universal = Combinable & Numeric; //==> number
+// working with constrains
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+  return Object.assign(objA, objB);
+}
 
-function add(a: Combinable, b: Combinable) {
-  //concept of type guard
-  if (typeof a === "string" || typeof b === "string") {
-    return a.toString() + b.toString();
+const mergedObj = merge({ name: "Max", hobbies: ["Sports"] }, { age: 30 });
+console.log(mergedObj.age);
+
+// generic functions
+type Lengthy = { length: number };
+
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+  /** return tuples type of 1st Elemnt is T and 2nd return type is string */
+  let discriptionText = "Got no Element!";
+  if (element.length === 1) {
+    discriptionText = "Got 1 Element";
+  } else if (element.length > 1) {
+    discriptionText = `Got ${element.length} Element`;
   }
-  return a + b;
+  return [element, discriptionText]; //returns tuples
 }
 
-// type Guares
-type UnkownEmployee = Employee | Admin; //union type
-function printEmployeeInformation(empInfo: UnkownEmployee) {
-  console.log(
-    `Name : ${empInfo.name}`
-  ); /*we will get name properties without any 
-        problem because both Objec has same 
-        propertie which is name:string for that reason have to use type Guard*/
+console.log(countAndDescribe("Hello World!"));
+console.log(countAndDescribe(["Hello", "World"]));
+console.log(countAndDescribe(""));
+// console.log(countAndDescribe(10); // number does not have length property and there for this does not work
 
-  if ("privileges" in empInfo) {
-    /** here in keyword check that => privileges is in empInfo? */
-    console.log(`previlege : ${empInfo.privileges}`);
-  }
-  if ("startDate" in empInfo) {
-    console.log(`starting date : ${empInfo.startDate}`);
-  }
+// the kyeof constrain
+
+function extractAndConvert<T extends object, U extends keyof T>(
+  obj: T,
+  key: U
+) {
+  return "value : " + obj[key];
 }
 
-// printEmployeeInformation(e1);
-printEmployeeInformation({ name: "Mohit", startDate: new Date() });
+const obj = extractAndConvert({ name: "Max" }, "name");
+console.log(obj);
 
-// Type has another type of type guard
+// Generic Classes
 
-class Car {
-  drive() {
-    console.log("Driving...");
+class DataStorage<T extends number | string | boolean> {
+  private data: T[] = [];
+  addItem(item: T) {
+    this.data.push(item);
   }
-}
-
-class Truck {
-  drive() {
-    console.log("Driving a Truck...");
+  removeItem(item: T) {
+    if (this.data.indexOf(item) === -1) {
+      return;
+    }
+    this.data.splice(this.data.indexOf(item), 1);
   }
-  loadCargo(amount: number) {
-    console.log("Loading Cargo..." + amount);
+  getItem() {
+    return [...this.data];
   }
 }
 
-type Vehical = Car | Truck;
+const textStorage = new DataStorage<string>();
+textStorage.addItem("Max");
+textStorage.addItem("Mohit");
+textStorage.addItem("Manu");
+textStorage.removeItem("Mohit");
+console.log(textStorage.getItem());
 
-const v1 = new Car();
-const v2 = new Truck();
-
-function useVehical(vehical: Vehical) {
-  vehical.drive();
-  if ("loadCargo" in vehical) {
-    vehical.loadCargo(1000);
-  }
-  //   if (vehical instanceof Truck) {  //--->> second method which is instenceof but we can not use with interface
-  //     vehical.loadCargo(1000);
-  //   }
-}
-
-useVehical(v2);
-useVehical(v1);
-
-// Discriminated Unions
-
-interface Bird {
-  type: "bird"; // having one common propertes in every object that is know as discriminated unions
-  flyingSpeed: number;
-}
-
-interface Horse {
-  type: "horse";
-  runningSpeed: number;
-}
-
-type Animal = Bird | Horse;
-
-function moveAnimal(animal: Animal) {
-  let speed;
-  switch (animal.type) {
-    case "bird":
-      speed = animal.flyingSpeed;
-      break;
-    case "horse":
-      speed = animal.runningSpeed;
-      break;
-  }
-  console.log("Moving at Speed : " + speed);
-}
-
-moveAnimal({ type: "bird", flyingSpeed: 20 });
-moveAnimal({ type: "horse", runningSpeed: 50 });
-
-//index properties
-
-interface ErrorContainer {
-  [prop: string]: string; // here prop type is string and poro value's type is also stritng
-}
-
-const errorBag: ErrorContainer = {
-  email: "Not valid email",
-  username: "Must start with a capital character!",
-};
-
-// function overloading
-
-function add1(a: number, b: number): number; // we dont need to
-function add1(a: string, b: number): string;
-function add1(a: number, b: string): string;
-function add1(a: string, b: string): string;
-function add1(a: Combinable, b: Combinable) {
-  //concept of type guard
-  if (typeof a === "string" || typeof b === "string") {
-    return a.toString() + b.toString();
-  }
-  return a + b;
-}
-
-const storedVal = add1(22, 3);
-console.log(storedVal);
-
-// Nullish Colescing
-
-const usrIn = null;
-const storedData =
-  usrIn ?? "DEFAULT"; /**when its left-hand side operand is null or undefined,
-        and otherwise returns its left-hand side operand. if value is empty 
-        then return as the empty string is not null or undefined */
-console.log(storedData);
+const objStorage = new DataStorage<object>();
+objStorage.addItem({ name: "Max" });
+objStorage.addItem({ name: "Manu" });
+objStorage.removeItem({ name: "Manu" });
+console.log(objStorage.getItem());
