@@ -1,77 +1,41 @@
 "use strict";
-// const names: Array<string> = []; //string[];
-// // names[0].split(" ");
-// const promise : Promise<string> = new Promise((resolve,reject)=>{
-//     setTimeout(()=>{
-//         resolve("hello World")
-//     },2000)
-// })
-// promise.then(data =>{
-//     console.log(data);
-// })
-// Creating Geneic functions
-let arrNum = [23, 43, 54, 65, 1234];
-let arrStr = ["a", "b", "c", "d", "e"];
-function getRandomEl(arr) {
-    const index = Math.floor(Math.random() * arr.length);
-    return arr[index];
+// decoretors class
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+function Logger(logString) {
+    //Decoretor Factories
+    return function (constructor) {
+        console.log(logString);
+        console.log(constructor);
+    };
 }
-let result;
-console.log(getRandomEl(arrStr));
-console.log(getRandomEl(arrNum));
-// working with constrains
-function merge(objA, objB) {
-    return Object.assign(objA, objB);
-}
-const mergedObj = merge({ name: "Max", hobbies: ["Sports"] }, { age: 30 });
-console.log(mergedObj.age);
-function countAndDescribe(element) {
-    /** return tuples type of 1st Elemnt is T and 2nd return type is string */
-    let discriptionText = "Got no Element!";
-    if (element.length === 1) {
-        discriptionText = "Got 1 Element";
-    }
-    else if (element.length > 1) {
-        discriptionText = `Got ${element.length} Element`;
-    }
-    return [element, discriptionText]; //returns tuples
-}
-console.log(countAndDescribe("Hello World!"));
-console.log(countAndDescribe(["Hello", "World"]));
-console.log(countAndDescribe(""));
-// console.log(countAndDescribe(10); // number does not have length property and there for this does not work
-// the kyeof constrain
-function extractAndConvert(obj, key) {
-    return "value : " + obj[key];
-}
-const obj = extractAndConvert({ name: "Max" }, "name");
-console.log(obj);
-// Generic Classes
-class DataStorage {
+let Person = class Person {
     constructor() {
-        this.data = [];
+        this.name = "Max";
+        console.log("Creating Person Object...");
     }
-    addItem(item) {
-        this.data.push(item);
-    }
-    removeItem(item) {
-        if (this.data.indexOf(item) === -1) {
-            return;
-        }
-        this.data.splice(this.data.indexOf(item), 1);
-    }
-    getItem() {
-        return [...this.data];
-    }
+};
+Person = __decorate([
+    Logger("LOGIN - PERSON")
+], Person);
+const pres = new Person();
+function logData(message) {
+    console.log(`Message is: ${message}`);
+    return function (target) {
+        console.log(target);
+    };
 }
-const textStorage = new DataStorage();
-textStorage.addItem("Max");
-textStorage.addItem("Mohit");
-textStorage.addItem("Manu");
-textStorage.removeItem('Mohit');
-console.log(textStorage.getItem());
-const objStorage = new DataStorage();
-objStorage.addItem({ name: "Max" });
-objStorage.addItem({ name: "Manu" });
-objStorage.removeItem({ name: 'Manu' });
-console.log(objStorage.getItem());
+let User = class User {
+    constructor(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+};
+User = __decorate([
+    logData("Hello world")
+], User);
+const user = new User("John", "Doe");
