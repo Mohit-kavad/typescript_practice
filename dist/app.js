@@ -13,6 +13,17 @@ function Logger(logString) {
         console.log(constructor);
     };
 }
+function WithTemplate(template, hookId) {
+    return function (constructor) {
+        console.log("Rendering templete");
+        const hookElement = document.getElementById(hookId);
+        const p = new constructor();
+        if (hookElement) {
+            hookElement.innerHTML = template;
+            hookElement.querySelector("h1").textContent = p.name;
+        }
+    };
+}
 let Person = class Person {
     constructor() {
         this.name = "Max";
@@ -20,22 +31,33 @@ let Person = class Person {
     }
 };
 Person = __decorate([
-    Logger("LOGIN - PERSON")
+    Logger("LOGIN - PERSON"),
+    WithTemplate("<h1>Hello world!</h1>", "app")
 ], Person);
 const pres = new Person();
-function logData(message) {
-    console.log(`Message is: ${message}`);
-    return function (target) {
-        console.log(target);
-    };
+console.log(pres);
+// Property Decorators
+function Log(target, propertyName) {
+    console.log('Property Decoretor!');
+    console.log(target, propertyName);
 }
-let User = class User {
-    constructor(firstName, lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+class Product {
+    constructor(t, p) {
+        this.title = t;
+        this._price = p;
     }
-};
-User = __decorate([
-    logData("Hello world")
-], User);
-const user = new User("John", "Doe");
+    set price(val) {
+        if (val > 0) {
+            this._price = val;
+        }
+        else {
+            throw new Error("Invalid Price - Should be possitive!");
+        }
+    }
+    getPriceWithTex(tax) {
+        return this._price * (1 + tax);
+    }
+}
+__decorate([
+    Log
+], Product.prototype, "title", void 0);
