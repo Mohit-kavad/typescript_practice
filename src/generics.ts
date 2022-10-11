@@ -110,3 +110,4 @@ function createCourseGoal(
   courseGoal.completeUntil = date;
   return courseGoal as CourseGoal;
 }
+
